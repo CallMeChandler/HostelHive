@@ -5,6 +5,7 @@ import DrawerSidebar from "./components/DrawerSidebar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import { getCurrentUser } from "./auth/authService";
 
 function App() {
   return (
@@ -19,16 +20,19 @@ function App() {
       <Route
         path="/dashboard"
         element={
-          <div className="flex h-screen bg-[#0a0f0d] text-[#36fba1]">
-            <Sidebar />
-            <DrawerSidebar />
-            <div className="flex-1 flex flex-col">
-              <Navbar />
-              <main className="flex-1 overflow-y-auto">
-                <Dashboard />
-              </main>
-            </div>
-          </div>
+          getCurrentUser() ? 
+            (<div className="flex h-screen bg-[#0a0f0d] text-[#36fba1]">
+              <Sidebar />
+              <DrawerSidebar />
+              <div className="flex-1 flex flex-col">
+                <Navbar />
+                <main className="flex-1 overflow-y-auto">
+                  <Dashboard />
+                </main>
+              </div>
+            </div>) : (
+              <Navigate to="/login" />
+            )
         }
       />
 
