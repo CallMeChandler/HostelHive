@@ -5,7 +5,8 @@ import DrawerSidebar from "./components/DrawerSidebar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Complaints from "./pages/Complaints";
+import Complaints  from "./pages/Complaints";
+import AdminComplaints from './pages/AdminComplaints';
 import { getCurrentUser } from "./auth/authService";
 
 function App() {
@@ -19,6 +20,8 @@ function App() {
 
       {/* Complaints Route */}
       <Route path="/complaints" element={<Complaints />} />
+
+      <Route path="/admin-complaints" element={<AdminComplaints />} />
 
 
       {/* Dashboard Route */}
