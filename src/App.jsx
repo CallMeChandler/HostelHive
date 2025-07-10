@@ -5,6 +5,7 @@ import DrawerSidebar from "./components/DrawerSidebar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Complaints from "./pages/Complaints";
 import { getCurrentUser } from "./auth/authService";
 
 function App() {
@@ -15,6 +16,10 @@ function App() {
 
       {/* Signup Route */}
       <Route path="/signup" element={<Signup />} />
+
+      {/* Complaints Route */}
+      <Route path="/complaints" element={<Complaints />} />
+
 
       {/* Dashboard Route */}
       <Route
