@@ -1,4 +1,5 @@
 import { MdDashboard, MdBuild, MdRestaurantMenu, MdSportsCricket } from "react-icons/md";
+import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 
@@ -22,6 +23,10 @@ const Sidebar = () => {
           <MdSportsCricket className="text-lg" />
           Sports Inventory
         </li>
+        <Link to="/Profile" className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-white transition">
+          <FaUser className="text-lg" />
+          My Profile
+        </Link>
       </ul>
     </aside>
   );

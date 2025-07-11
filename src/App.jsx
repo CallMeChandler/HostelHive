@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Complaints  from "./pages/Complaints";
 import AdminComplaints from './pages/AdminComplaints';
+import Profile from "./pages/Profile";
+import MyComplaints from "./pages/MyComplaints";
 import { getCurrentUser } from "./auth/authService";
 
 function App() {
@@ -20,6 +22,12 @@ function App() {
 
       {/* Complaints Route */}
       <Route path="/complaints" element={<Complaints />} />
+
+      {/* Profile Route */}
+      <Route path="/profile" element={<Profile />} />
+      
+      {/* Complaint Dashboard Route */}
+      <Route path="/my-complaints" element={<MyComplaints />} />
 
       <Route path="/admin-complaints" element={<AdminComplaints />} />
 

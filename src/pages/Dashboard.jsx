@@ -1,6 +1,8 @@
 import { FaUser, FaTools, FaUtensils, FaFootballBall } from "react-icons/fa";
 import { getCurrentUser } from "../auth/authService";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 
 const Dashboard = () => {
     const user = getCurrentUser();
@@ -57,13 +59,14 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className={cardStyle}>
+                <Link to="/my-complaints" className={cardStyle}>
                     <FaTools size={28} />
                     <div>
                         <p className="text-sm">Your Complaints</p>
                         <p className="font-semibold">{complaintsCount} total</p>
                     </div>
-                </div>
+                </Link>
+
 
                 <div className={cardStyle}>
                     <FaUtensils size={28} />
