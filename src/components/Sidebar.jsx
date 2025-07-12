@@ -15,10 +15,10 @@ const Sidebar = () => {
           <MdBuild className="text-lg" />
           Complaints
         </Link>
-        <li className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-white transition">
+        <Link to="/mess" className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-white transition">
           <MdRestaurantMenu className="text-lg" />
           Mess Menu
-        </li>
+        </Link>
         <li className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-white transition">
           <MdSportsCricket className="text-lg" />
           Sports Inventory

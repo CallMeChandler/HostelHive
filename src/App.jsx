@@ -9,6 +9,7 @@ import Complaints  from "./pages/Complaints";
 import AdminComplaints from './pages/AdminComplaints';
 import Profile from "./pages/Profile";
 import MyComplaints from "./pages/MyComplaints";
+import MessMenu from "./pages/MessMenu";
 import { getCurrentUser } from "./auth/authService";
 
 function App() {
@@ -25,6 +26,9 @@ function App() {
 
       {/* Profile Route */}
       <Route path="/profile" element={<Profile />} />
+
+      {/* Login Route */}
+      <Route path="/mess" element={<MessMenu />} />
       
       {/* Complaint Dashboard Route */}
       <Route path="/my-complaints" element={<MyComplaints />} />
