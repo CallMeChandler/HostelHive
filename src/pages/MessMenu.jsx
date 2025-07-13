@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
 
 const weekMenu = {
     Monday: {
@@ -176,7 +178,11 @@ const weekMenu = {
 const meals = ["Breakfast", "Lunch", "Snacks", "Dinner"];
 
 const MessMenu = () => {
-    const [selectedDay, setSelectedDay] = useState("Monday");
+    const [selectedDay, setSelectedDay] = useState(days[0]);
+
+    useEffect(() => {
+    setSelectedDay(days[new Date().getDay()]);
+  }, []);
 
 
     return (
