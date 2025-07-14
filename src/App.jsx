@@ -10,7 +10,10 @@ import AdminComplaints from './pages/AdminComplaints';
 import Profile from "./pages/Profile";
 import MyComplaints from "./pages/MyComplaints";
 import MessMenu from "./pages/MessMenu";
+import ManageComplaints from "./pages/ManageComplaints";
+import SportsInventory from "./pages/SportsInventory";
 import { getCurrentUser } from "./auth/authService";
+
 
 function App() {
   return (
@@ -29,10 +32,14 @@ function App() {
 
       {/* Login Route */}
       <Route path="/mess" element={<MessMenu />} />
+
+      {/* Sports Route */}
+      <Route path="/sports" element={<SportsInventory />} />
       
       {/* Complaint Dashboard Route */}
       <Route path="/my-complaints" element={<MyComplaints />} />
 
+      <Route path="/manage-complaints" element={<ManageComplaints />} />
       <Route path="/admin-complaints" element={<AdminComplaints />} />
 
 

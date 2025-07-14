@@ -8,7 +8,7 @@ const Login = () => {
 
   useEffect(() => {
     if (getCurrentUser()) navigate("/dashboard");
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

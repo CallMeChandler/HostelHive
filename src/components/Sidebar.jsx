@@ -1,6 +1,8 @@
 import { MdDashboard, MdBuild, MdRestaurantMenu, MdSportsCricket } from "react-icons/md";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaTools } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { getCurrentUser } from "../auth/authService";
+const user = getCurrentUser();
 
 
 const Sidebar = () => {
@@ -19,14 +21,25 @@ const Sidebar = () => {
           <MdRestaurantMenu className="text-lg" />
           Mess Menu
         </Link>
-        <li className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-white transition">
+        <Link to="/sports" className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-white transition">
           <MdSportsCricket className="text-lg" />
           Sports Inventory
-        </li>
+        </Link>
         <Link to="/Profile" className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-white transition">
           <FaUser className="text-lg" />
           My Profile
         </Link>
+        {["admin", "maintenance"].includes(user?.role) && (
+          <li>
+            <Link
+              to="/manage-complaints"
+              className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-[#36fba1] transition"
+            >
+              <FaTools /> Manage Complaints
+            </Link>
+          </li>
+        )}
+
       </ul>
     </aside>
   );
