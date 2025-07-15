@@ -1,5 +1,6 @@
 import { MdDashboard, MdBuild, MdRestaurantMenu, MdSportsCricket } from "react-icons/md";
 import { FaUser, FaTools } from "react-icons/fa";
+import { HiMiniUsers } from "react-icons/hi2";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "../auth/authService";
 const user = getCurrentUser();
@@ -36,6 +37,16 @@ const Sidebar = () => {
               className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-[#36fba1] transition"
             >
               <FaTools /> Manage Complaints
+            </Link>
+          </li>
+        )}
+        {["admin"].includes(user?.role) && (
+          <li>
+            <Link
+              to="/manage-users"
+              className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-[#36fba1] transition"
+            >
+              <HiMiniUsers /> Manage Users
             </Link>
           </li>
         )}

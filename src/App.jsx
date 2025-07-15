@@ -12,6 +12,7 @@ import MyComplaints from "./pages/MyComplaints";
 import MessMenu from "./pages/MessMenu";
 import ManageComplaints from "./pages/ManageComplaints";
 import SportsInventory from "./pages/SportsInventory";
+import ManageUsers from "./pages/ManageUsers";
 import { getCurrentUser } from "./auth/authService";
 
 
@@ -39,6 +40,7 @@ function App() {
       {/* Complaint Dashboard Route */}
       <Route path="/my-complaints" element={<MyComplaints />} />
 
+      <Route path="/manage-users" element={<ManageUsers />} />
       <Route path="/manage-complaints" element={<ManageComplaints />} />
       <Route path="/admin-complaints" element={<AdminComplaints />} />
 

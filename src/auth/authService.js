@@ -30,7 +30,7 @@ export const login = ({ email, password }) => {
 };
 
 /* 🔏 SIGN‑UP  */
-export const signup = ({ name, email, password }) => {
+export const signup = ({ name, email, password, room, hostel }) => {
   const users = JSON.parse(localStorage.getItem(USER_LIST_KEY)) || [];
 
   const e = cleanEmail(email);
@@ -38,7 +38,7 @@ export const signup = ({ name, email, password }) => {
 
   if (users.find((u) => cleanEmail(u.email) === e)) return false; // duplicate
 
-  const newUser = { name, email: e, password: p, role: "student" };
+  const newUser = { name, email: e, password: p, room, hostel, role: "student" };
   users.push(newUser);
 
   localStorage.setItem(USER_LIST_KEY, JSON.stringify(users));
