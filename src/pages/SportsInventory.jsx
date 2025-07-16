@@ -31,14 +31,19 @@ const SportsInventory = () => {
         setStock(updated);
         localStorage.setItem(INVENTORY_KEY, JSON.stringify(updated));
 
-        const requests = JSON.parse(localStorage.getItem(REQUEST_KEY)) || [];
-        requests.push({
-            user: user.email,
+        const existingRequests = JSON.parse(localStorage.getItem(REQUEST_KEY)) || [];
+
+        const newRequest = {
+            name: user.name,
+            email: user.email,
             item: updated[idx].item,
+            quantity: 1,
             date: new Date().toISOString(),
             status: "pending"
-        });
-        localStorage.setItem(REQUEST_KEY, JSON.stringify(requests));
+        };
+
+        const updatedRequests = [...existingRequests, newRequest];
+        localStorage.setItem(REQUEST_KEY, JSON.stringify(updatedRequests));
 
         alert("Request sent to Sports Secretary!");
     };
@@ -65,8 +70,8 @@ const SportsInventory = () => {
                             onClick={() => handleRequest(idx)}
                             disabled={s.qty === 0}
                             className={`mt-auto px-3 py-2 rounded ${s.qty === 0
-                                    ? "bg-gray-600 cursor-not-allowed"
-                                    : "bg-[#36fba1] text-black hover:bg-[#29c984]"
+                                ? "bg-gray-600 cursor-not-allowed"
+                                : "bg-[#36fba1] text-black hover:bg-[#29c984]"
                                 }`}
                         >
                             {s.qty === 0 ? "Out of Stock" : "Request Item"}
@@ -76,8 +81,6 @@ const SportsInventory = () => {
             </div>
         </div>
     );
-
-
 };
 
 export default SportsInventory;
