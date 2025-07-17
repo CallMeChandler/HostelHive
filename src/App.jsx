@@ -5,7 +5,7 @@ import DrawerSidebar from "./components/DrawerSidebar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Complaints  from "./pages/Complaints";
+import Complaints from "./pages/Complaints";
 import AdminComplaints from './pages/AdminComplaints';
 import Profile from "./pages/Profile";
 import MyComplaints from "./pages/MyComplaints";
@@ -14,11 +14,14 @@ import ManageComplaints from "./pages/ManageComplaints";
 import SportsInventory from "./pages/SportsInventory";
 import ManageUsers from "./pages/ManageUsers";
 import ManageSports from "./pages/ManageSports";
+import { Toaster } from 'react-hot-toast';
 import { getCurrentUser } from "./auth/authService";
 
 
 function App() {
   return (
+    <>
+    <Toaster position="top-right" reverseOrder={false} />
     <Routes>
       {/* Login Route */}
       <Route path="/login" element={<Login />} />
@@ -71,6 +74,7 @@ function App() {
       {/* Redirect root (/) to /dashboard */}
       <Route path="/" element={<Navigate to="/dashboard" />} />
     </Routes>
+  </>
   );
 }
 

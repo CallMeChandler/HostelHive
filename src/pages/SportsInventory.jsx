@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../auth/authService";
+import toast from 'react-hot-toast';
+
 
 const INVENTORY_KEY = "hostelhive-sports-stock";
 const REQUEST_KEY = "hostelhive-sports-requests";
@@ -45,7 +47,7 @@ const SportsInventory = () => {
         const updatedRequests = [...existingRequests, newRequest];
         localStorage.setItem(REQUEST_KEY, JSON.stringify(updatedRequests));
 
-        alert("Request sent to Sports Secretary!");
+        toast.success("Request sent to Sports Secretary!");
     };
 
     return (
