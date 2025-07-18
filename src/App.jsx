@@ -14,6 +14,9 @@ import ManageComplaints from "./pages/ManageComplaints";
 import SportsInventory from "./pages/SportsInventory";
 import ManageUsers from "./pages/ManageUsers";
 import ManageSports from "./pages/ManageSports";
+import EditMessMenu from "./pages/EditMessMenu";
+import Notifications from "./pages/Notifications";
+import ManageNotifications from "./components/ManageNotifications";
 import { Toaster } from 'react-hot-toast';
 import { getCurrentUser } from "./auth/authService";
 
@@ -44,11 +47,16 @@ function App() {
       {/* Complaint Dashboard Route */}
       <Route path="/my-complaints" element={<MyComplaints />} />
 
-      
+      {/* Notifications Tab Route */}
+      <Route path="/notifications" element={<Notifications />} />
+
+      {/* Admin/Role Routes */}
+      <Route path="/edit-mess-menu" element={<EditMessMenu />} />
       <Route path="/manage-sports" element={<ManageSports />} />
       <Route path="/manage-users" element={<ManageUsers />} />
       <Route path="/manage-complaints" element={<ManageComplaints />} />
       <Route path="/admin-complaints" element={<AdminComplaints />} />
+      <Route path="/manage-notifications" element={<ManageNotifications />} />
 
 
       {/* Dashboard Route */}

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../auth/authService";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 
 const ManageUsers = () => {
     const navigate = useNavigate();
     const currentUser = getCurrentUser();
     const [users, setUsers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         // Redirect non-admin users
@@ -19,9 +21,25 @@ const ManageUsers = () => {
         setUsers(allUsers);
     }, []);
 
+    const handleRoleChange = (email, newRole) => {
+        const updatedUsers = users.map((u) =>
+            u.email === email ? { ...u, role: newRole } : u
+        );
+        setUsers(updatedUsers);
+        localStorage.setItem("hostelhive-users", JSON.stringify(updatedUsers));
+        toast.success("Role Updated!");
+    };
+
     return (
         <div className="p-6 bg-[#0a0f0d] min-h-screen text-[#36fba1]">
             <h1 className="text-2xl font-bold mb-6">👥 Manage Users</h1>
+            <input
+                type="text"
+                placeholder="Search by name or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-full mb-4 p-2 rounded-md bg-[#1e1e1e] text-[#36fba1] border border-[#36fba144] focus:outline-none"
+            />
 
             <div className="overflow-x-auto">
                 <table className="w-full text-sm border border-[#36fba133]">
@@ -36,7 +54,10 @@ const ManageUsers = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user, idx) => (
+                        {users.filter(u =>
+                            u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            u.email.toLowerCase().includes(searchTerm.toLowerCase())
+                        ).map((user, idx) => (
                             <tr key={idx} className="border-t border-[#36fba122] hover:bg-[#1f1f1f]">
                                 <td className="p-3">{user.name}</td>
                                 <td className="p-3">{user.email}</td>
@@ -44,7 +65,16 @@ const ManageUsers = () => {
                                 <td className="p-3">{user.room || "—"}</td>
                                 <td className="p-3 capitalize">{user.role}</td>
                                 <td className="p-3">
-                                    <button className="text-sm underline hover:text-white">Edit</button>
+                                    <button className="text-sm underline hover:text-white"><select
+                                        value={user.role}
+                                        onChange={(e) => handleRoleChange(user.email, e.target.value)}
+                                        className="bg-[#1c1f1e] border border-[#36fba1] rounded px-2 py-1 text-sm"
+                                    >
+                                        <option value="student">Student</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="secretary">Secretary</option>
+                                    </select>
+                                    </button>
                                 </td>
                             </tr>
                         ))}

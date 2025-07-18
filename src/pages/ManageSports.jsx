@@ -9,10 +9,14 @@ const ManageSports = () => {
     }, []);
 
     const updateStatus = (index, newStatus) => {
-        const updated = [...requests];
-        updated[index].status = newStatus;
-        setRequests(updated);
-        localStorage.setItem("sportsRequests", JSON.stringify(updated));
+        if (newStatus === "approved") {
+            const stock = JSON.parse(localStorage.getItem("hostelhive-sports-stock")) || [];
+            const index = stock.findIndex(s => s.item === requests[index].item);
+            if (index !== -1) {
+                stock[index].qty += 1;
+                localStorage.setItem("hostelhive-sports-stock", JSON.stringify(stock));
+            }
+        }
     };
 
     const getStatusColor = (status) => {
