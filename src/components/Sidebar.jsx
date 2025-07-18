@@ -1,6 +1,7 @@
-import { MdDashboard, MdBuild, MdRestaurantMenu, MdSportsCricket } from "react-icons/md";
+import { MdDashboard, MdBuild, MdRestaurantMenu, MdSportsCricket, MdNotificationAdd } from "react-icons/md";
 import { FaUser, FaTools, FaTableTennis } from "react-icons/fa";
 import { HiMiniUsers } from "react-icons/hi2";
+import { IoFastFoodOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "../auth/authService";
 const user = getCurrentUser();
@@ -30,6 +31,16 @@ const Sidebar = () => {
           <FaUser className="text-lg" />
           My Profile
         </Link>
+        {["admin"].includes(user?.role) && (
+          <li>
+            <Link
+              to="/manage-notifications"
+              className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-[#36fba1] transition"
+            >
+              <MdNotificationAdd /> Manage Notifications
+            </Link>
+          </li>
+        )}
         {["admin", "maintenance"].includes(user?.role) && (
           <li>
             <Link
@@ -47,6 +58,16 @@ const Sidebar = () => {
               className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-[#36fba1] transition"
             >
               <FaTableTennis /> Manage Sports
+            </Link>
+          </li>
+        )}
+        {["admin", "mess"].includes(user?.role) && (
+          <li>
+            <Link
+              to="/edit-mess-menu"
+              className="flex items-center gap-2 px-2 py-1 rounded-md hover:text-[#36fba1] transition"
+            >
+              <IoFastFoodOutline /> Edit Mess Menu
             </Link>
           </li>
         )}
