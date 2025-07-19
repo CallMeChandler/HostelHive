@@ -4,58 +4,61 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const daysOfWeek = [
-    "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
 ];
 
 const MEALS = ["Breakfast", "Lunch", "Snacks", "Dinner"];
 const MENU_KEY = "hostelhive-mess-menu";
 
 const EditMessMenu = () => {
-    const user = getCurrentUser();
-    const navigate = useNavigate();
+  const user = getCurrentUser();
+  const navigate = useNavigate();
 
-    const [selectedDay, setSelectedDay] = useState("Monday");
-    const [menu, setMenu] = useState({});
-    const [form, setForm] = useState({
-        Breakfast: "",
-        Lunch: "",
-        Snacks: "",
-        Dinner: "",
+  const [selectedDay, setSelectedDay] = useState("Monday");
+  const [menu, setMenu] = useState({});
+  const [form, setForm] = useState({
+    Breakfast: "",
+    Lunch: "",
+    Snacks: "",
+    Dinner: "",
+  });
+
+  useEffect(() => {
+    if (!user || (user.role !== "admin" && user.role !== "secretary")) {
+      navigate("/dashboard");
+      return;
+    }
+
+    const savedMenu = JSON.parse(localStorage.getItem(MENU_KEY)) || {};
+    setMenu(savedMenu);
+    if (savedMenu[selectedDay]) {
+      setForm(savedMenu[selectedDay]);
+    }
+
+  }, []);
+
+  const handleDayChange = (day) => {
+    setSelectedDay(day);
+    setForm(menu[day] || {
+      Breakfast: "",
+      Lunch: "",
+      Snacks: "",
+      Dinner: ""
     });
+  };
 
-    useEffect(() => {
-        if (!user || (user.role !== "admin" && user.role !== "secretary")) {
-            navigate("/dashboard");
-            return;
-        }
+  const handleInput = (meal, value) => {
+    setForm({ ...form, [meal]: value });
+  };
 
-        const savedMenu = JSON.parse(localStorage.getItem(MENU_KEY)) || {};
-        setMenu(savedMenu);
-        if (savedMenu["Monday"]) setForm(savedMenu["Monday"]);
-    }, []);
+  const handleSave = () => {
+    const updatedMenu = { ...menu, [selectedDay]: form };
+    setMenu(updatedMenu);
+    localStorage.setItem(MENU_KEY, JSON.stringify(updatedMenu));
+    toast.success(`${selectedDay} menu updated!`);
+  };
 
-    const handleDayChange = (day) => {
-        setSelectedDay(day);
-        setForm(menu[day] || {
-            Breakfast: "",
-            Lunch: "",
-            Snacks: "",
-            Dinner: ""
-        });
-    };
-
-    const handleInput = (meal, value) => {
-        setForm({ ...form, [meal]: value });
-    };
-
-    const handleSave = () => {
-        const updatedMenu = { ...menu, [selectedDay]: form };
-        setMenu(updatedMenu);
-        localStorage.setItem(MENU_KEY, JSON.stringify(updatedMenu));
-        toast.success(`${selectedDay} menu updated!`);
-    };
-
-    return (
+  return (
     <div className="p-6 min-h-screen bg-[#0a0f0d] text-[#36fba1]">
       <h1 className="text-2xl font-bold mb-6">📝 Edit Mess Menu</h1>
 

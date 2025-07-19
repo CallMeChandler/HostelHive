@@ -94,6 +94,9 @@ const Complaints = () => {
           <option value="Electrical">Electrical</option>
           <option value="Plumbing">Plumbing</option>
           <option value="Furniture">Furniture</option>
+          <option value="Other">Hygiene</option>
+          <option value="Other">Mess</option>
+          <option value="Other">Sports</option>
           <option value="Other">Other</option>
         </select>
 
