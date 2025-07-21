@@ -1,7 +1,7 @@
 /*  ── src/auth/authService.js  ────────────────────────────────────── */
 
 const USER_LIST_KEY = "hostelhive-users";      // one key for everything
-const CURRENT_KEY   = "currentUser";
+const CURRENT_KEY   = "user";
 
 /* helper: always trim + lower‑case email */
 const cleanEmail    = (e) => e.trim().toLowerCase();

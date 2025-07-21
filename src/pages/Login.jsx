@@ -1,19 +1,33 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, getCurrentUser } from "../auth/authService";
+import { loginUser } from "../api/auth";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (getCurrentUser()) navigate("/dashboard");
+    const token = localStorage.getItem("token");
+    if (token) navigate("/dashboard");
   }, [navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = login(formData);
-    success ? navigate("/dashboard") : alert("Invalid email or password");
+    try {
+      const res = await loginUser(formData);
+      const { token, user } = res.data;
+
+      // Save token & user info
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      toast.success("Login successful!");
+      navigate("/dashboard");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Login failed!";
+      toast.error(msg);
+    }
   };
 
   return (
@@ -22,32 +36,28 @@ const Login = () => {
         <h2 className="text-3xl font-bold mb-6 text-center">Login to HostelHive</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* EMAIL */}
           <div>
             <label className="block text-sm mb-1">Email</label>
             <input
               type="email"
-              placeholder="you@bitmesra.ac.in"
-              value={formData.email}                                   
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }                                                       
+              name="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
+              placeholder="you@bitmesra.ac.in"
               className="w-full bg-[#0a0f0d] text-[#36fba1] border border-[#36fba144] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#36fba1]"
             />
           </div>
 
-          
           <div>
             <label className="block text-sm mb-1">Password</label>
             <input
               type="password"
-              placeholder="********"
-              value={formData.password}                               
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }                                                       
+              name="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
+              placeholder="********"
               className="w-full bg-[#0a0f0d] text-[#36fba1] border border-[#36fba144] px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#36fba1]"
             />
           </div>

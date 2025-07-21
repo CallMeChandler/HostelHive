@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../auth/authService";
+import { registerUser } from "../api/auth";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -20,28 +21,19 @@ const Signup = () => {
     }));
   };
 
-  const isRoomFull = () => {
-    const users = JSON.parse(localStorage.getItem("hostelhive-users")) || [];
-    const sameRoomUsers = users.filter(
-      u => u.room === formData.room && u.hostel === formData.hostel
-    );
-    return sameRoomUsers.length >= 2;
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isRoomFull()) {
-      alert("This room is already full (2 users max). Choose another room.");
-      return;
-    }
 
-    const success = signup(formData);
-    if (success) {
-      navigate("/dashboard");
-    } else {
-      alert("Email already registered!");
+    try {
+      const res = await registerUser(formData);
+      toast.success("Registered successfully!");
+      navigate("/login");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Something went wrong";
+      toast.error(msg);
     }
   };
+
 
   return (
     <div className="flex justify-center items-center min-h-[85vh] bg-[#0a0f0d] text-[#36fba1] px-4 py-10">
