@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "../auth/authService";
-
-const LOCAL_KEY = "hostelhive-complaints";
+import { submitComplaint, getMyComplaints } from "../api/complaint.js";
+import toast from "react-hot-toast";
 
 const Complaints = () => {
-  const user = getCurrentUser();
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -15,40 +12,42 @@ const Complaints = () => {
 
   const [complaints, setComplaints] = useState([]);
 
-  /* 🟢 Load current user’s complaints on mount */
+  // Fetch my complaints on mount
   useEffect(() => {
-    const all = JSON.parse(localStorage.getItem(LOCAL_KEY)) || [];
-    setComplaints(all.filter((c) => c.email === user.email).reverse());
-  }, [user.email]);
-
-  /* 📝 Submit new complaint */
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const all = JSON.parse(localStorage.getItem(LOCAL_KEY)) || [];
-
-    const newComplaint = {
-      ...formData,
-      email: user.email,
-      name: user.name,
-      room: formData.room || user.room,
-      status: "lodged",
-      date: new Date().toISOString()
+    const fetchComplaints = async () => {
+      try {
+        const res = await getMyComplaints();
+        setComplaints(res.data.reverse());
+      } catch (err) {
+        toast.error("Failed to fetch complaints.");
+        console.error(err);
+      }
     };
 
-    const updated = [...all, newComplaint];
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(updated));
+    fetchComplaints();
+  }, []);
 
-    setComplaints([newComplaint, ...complaints]); // update UI instantly
-    setFormData({ title: "", description: "", category: "", room: "" });
-    alert("Complaint submitted!");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await submitComplaint(formData);
+      toast.success("Complaint submitted!");
+
+      // Reload complaint list
+      const res = await getMyComplaints();
+      setComplaints(res.data.reverse());
+
+      setFormData({ title: "", description: "", category: "", room: "" });
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Submission failed.");
+    }
   };
 
   return (
     <div className="p-6 text-white bg-[#0e0e0e] min-h-screen">
       <h2 className="text-xl font-semibold mb-4">Raise a Complaint</h2>
 
-      {/* ➕ Complaint Form */}
       <form onSubmit={handleSubmit} className="space-y-4 mb-8">
         <input
           type="text"
@@ -56,7 +55,7 @@ const Complaints = () => {
           placeholder="Title"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          className="w-full p-2 bg-[#1e1e1e] rounded-md border border-[#36fba1] focus:outline-none"
+          className="w-full p-2 bg-[#1e1e1e] rounded-md border border-[#36fba1]"
           required
         />
 
@@ -67,7 +66,7 @@ const Complaints = () => {
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
-          className="w-full p-2 bg-[#1e1e1e] rounded-md border border-[#36fba1] focus:outline-none"
+          className="w-full p-2 bg-[#1e1e1e] rounded-md border border-[#36fba1]"
           required
         />
 
@@ -94,9 +93,9 @@ const Complaints = () => {
           <option value="Electrical">Electrical</option>
           <option value="Plumbing">Plumbing</option>
           <option value="Furniture">Furniture</option>
-          <option value="Other">Hygiene</option>
-          <option value="Other">Mess</option>
-          <option value="Other">Sports</option>
+          <option value="Hygiene">Hygiene</option>
+          <option value="Mess">Mess</option>
+          <option value="Sports">Sports</option>
           <option value="Other">Other</option>
         </select>
 
@@ -108,7 +107,6 @@ const Complaints = () => {
         </button>
       </form>
 
-      {/* 📜 User’s Complaints */}
       <h2 className="text-lg font-semibold mb-2">Your Complaints</h2>
       <div className="space-y-3">
         {complaints.length === 0 && (
@@ -129,7 +127,7 @@ const Complaints = () => {
               Room: {c.room} | Status: {c.status}
             </p>
             <p className="text-xs text-gray-500">
-              {new Date(c.date).toLocaleString()}
+              {new Date(c.createdAt).toLocaleString()}
             </p>
           </div>
         ))}

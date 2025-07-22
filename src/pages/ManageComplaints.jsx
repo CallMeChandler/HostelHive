@@ -1,58 +1,77 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const ManageComplaints = () => {
-  const [allComplaints, setAllComplaints] = useState([]);
+  const [complaints, setComplaints] = useState([]);
 
   useEffect(() => {
-    const complaints = JSON.parse(localStorage.getItem("hostelhive-complaints")) || [];
-    setAllComplaints(complaints);
+    const fetchAll = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5000/api/complaints/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setComplaints(res.data);
+      } catch (error) {
+        toast.error("Failed to fetch complaints.");
+      }
+    };
+
+    fetchAll();
   }, []);
 
-  const toggleStatus = (index) => {
-    const updated = [...allComplaints];
-    updated[index].status = updated[index].status === "lodged" ? "closed" : "lodged";
-    setAllComplaints(updated);
-    localStorage.setItem("hostelhive-complaints", JSON.stringify(updated));
+  const handleStatusChange = async (id, status) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5000/api/complaints/${id}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setComplaints((prev) =>
+        prev.map((c) => (c._id === id ? { ...c, status } : c))
+      );
+      toast.success("Status updated");
+    } catch (error) {
+      toast.error("Failed to update status.");
+    }
   };
 
   return (
-    <div className="p-6 text-white min-h-screen bg-[#0e0e0e]">
-      <h2 className="text-2xl font-bold mb-6">Manage All Complaints</h2>
+    <div className="p-6 text-white bg-[#0e0e0e] min-h-screen">
+      <h2 className="text-2xl font-bold mb-6">📋 All Complaints</h2>
 
-      {allComplaints.length === 0 ? (
-        <p className="text-sm text-gray-400 italic">No complaints to manage.</p>
+      {complaints.length === 0 ? (
+        <p>No complaints found.</p>
       ) : (
         <div className="space-y-4">
-          {allComplaints.map((c, i) => (
-            <div
-              key={i}
-              className="p-4 bg-[#1a1a1a] rounded-lg border border-[#36fba122]"
-            >
+          {complaints.map((c) => (
+            <div key={c._id} className="p-4 rounded-md border border-[#36fba1] bg-[#1c1c1c]">
               <p className="text-lg font-semibold">{c.title}</p>
-              <p className="text-sm">{c.description}</p>
-              <p className="text-sm mt-1 text-gray-400">
-                Category: {c.category} | Room: {c.room} | Hostel: {c.hostel}
+              <p className="text-sm text-gray-300">{c.description}</p>
+              <p className="text-xs text-gray-400">
+                {c.name} ({c.email}) | Room: {c.room} | Category: {c.category}
               </p>
-              <p className="text-xs text-gray-500">
-                By {c.name} ({c.email}) — {new Date(c.date).toLocaleString()}
-              </p>
-
-              <div className="mt-3 flex items-center gap-4">
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    c.status === "lodged"
-                      ? "bg-yellow-600 text-white"
-                      : "bg-green-600 text-white"
-                  }`}
-                >
-                  {c.status}
+              <div className="mt-2 flex items-center gap-4">
+                <span className="text-sm">
+                  Status:{" "}
+                  <span className="capitalize px-2 py-1 bg-[#36fba122] rounded">
+                    {c.status}
+                  </span>
                 </span>
-                <button
-                  onClick={() => toggleStatus(i)}
-                  className="px-3 py-1 text-sm bg-[#36fba1] text-black rounded hover:bg-[#2ae79a] transition"
+
+                <select
+                  value={c.status}
+                  onChange={(e) => handleStatusChange(c._id, e.target.value)}
+                  className="bg-[#121212] text-white border border-[#36fba1] rounded px-2 py-1 text-sm"
                 >
-                  Mark as {c.status === "lodged" ? "Closed" : "Lodged"}
-                </button>
+                  <option value="lodged">Lodged</option>
+                  <option value="in progress">In Progress</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="closed">Closed</option>
+                </select>
               </div>
             </div>
           ))}

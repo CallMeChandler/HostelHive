@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { getCurrentUser } from "../auth/authService";
 
 const MyComplaints = () => {
@@ -6,11 +8,21 @@ const MyComplaints = () => {
     const user = getCurrentUser();
 
     useEffect(() => {
-        const stored = JSON.parse(localStorage.getItem("hostelhive-complaints")) || [];
-        const filtered = stored.filter((c) => c.email === user.email);
-        setComplaints(filtered.reverse()); // latest first
-    }, [user.email]);
+        const fetchComplaints = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get("http://localhost:5000/api/complaints/my", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
+                setComplaints(res.data);
+            } catch (err) {
+                toast.error("Failed to load complaints.");
+            }
+        };
+
+        fetchComplaints();
+    }, []);
     return (
         <div className="min-h-screen bg-[#0a0f0d] text-[#36fba1] p-6">
             <h2 className="text-2xl font-bold mb-6">Your Complaints</h2>
@@ -33,8 +45,8 @@ const MyComplaints = () => {
                             <div className="mt-3 md:mt-0 flex items-center gap-3">
                                 <span
                                     className={`px-3 py-1 text-sm rounded-full font-semibold ${complaint.status === "closed"
-                                            ? "bg-green-600 text-white"
-                                            : "bg-yellow-400 text-black"
+                                        ? "bg-green-600 text-white"
+                                        : "bg-yellow-400 text-black"
                                         }`}
                                 >
                                     {complaint.status === "closed" ? "Closed" : "Lodged"}
