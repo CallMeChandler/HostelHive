@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../auth/authService";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import toast from "react-hot-toast";
-
 
 const ManageUsers = () => {
     const navigate = useNavigate();
@@ -11,24 +11,49 @@ const ManageUsers = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        // Redirect non-admin users
         if (!currentUser || currentUser.role !== "admin") {
-            navigate("/dashboard");
+            toast.error("Access denied.");
+            navigate("/login");
             return;
         }
 
-        const allUsers = JSON.parse(localStorage.getItem("hostelhive-users")) || [];
-        setUsers(allUsers);
-    }, []);
+        const fetchUsers = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get("http://localhost:5000/api/users/all", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-    const handleRoleChange = (email, newRole) => {
-        const updatedUsers = users.map((u) =>
-            u.email === email ? { ...u, role: newRole } : u
-        );
-        setUsers(updatedUsers);
-        localStorage.setItem("hostelhive-users", JSON.stringify(updatedUsers));
-        toast.success("Role Updated!");
+                setUsers(res.data);
+                console.log("API returned:", res.data);
+
+            } catch (err) {
+                console.error("Failed to fetch users", err);
+            }
+        };
+
+        fetchUsers();
+    }, [currentUser, navigate]);
+
+    const handleRoleChange = async (id, newRole) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await axios.put(
+                `http://localhost:5000/api/users/role/${id}`,
+                { role: newRole },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            toast.success("Role updated!");
+            setUsers((prev) =>
+                prev.map((u) => (u._id === id ? { ...u, role: newRole } : u))
+            );
+        } catch (err) {
+            console.error("Role update failed", err);
+            toast.error("Failed to update role");
+        }
     };
+
 
     return (
         <div className="p-6 bg-[#0a0f0d] min-h-screen text-[#36fba1]">
@@ -38,7 +63,7 @@ const ManageUsers = () => {
                 placeholder="Search by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full sm:w-full mb-4 p-2 rounded-md bg-[#1e1e1e] text-[#36fba1] border border-[#36fba144] focus:outline-none"
+                className="w-full mb-4 p-2 rounded-md bg-[#1e1e1e] text-[#36fba1] border border-[#36fba144] focus:outline-none"
             />
 
             <div className="overflow-x-auto">
@@ -54,30 +79,35 @@ const ManageUsers = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.filter(u =>
-                            u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            u.email.toLowerCase().includes(searchTerm.toLowerCase())
-                        ).map((user, idx) => (
-                            <tr key={idx} className="border-t border-[#36fba122] hover:bg-[#1f1f1f]">
-                                <td className="p-3">{user.name}</td>
-                                <td className="p-3">{user.email}</td>
-                                <td className="p-3">{user.hostel || "—"}</td>
-                                <td className="p-3">{user.room || "—"}</td>
-                                <td className="p-3 capitalize">{user.role}</td>
-                                <td className="p-3">
-                                    <button className="text-sm underline hover:text-white"><select
-                                        value={user.role}
-                                        onChange={(e) => handleRoleChange(user.email, e.target.value)}
-                                        className="bg-[#1c1f1e] border border-[#36fba1] rounded px-2 py-1 text-sm"
-                                    >
-                                        <option value="student">Student</option>
-                                        <option value="admin">Admin</option>
-                                        <option value="secretary">Secretary</option>
-                                    </select>
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {users
+                            .filter(
+                                (u) =>
+                                    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    u.email.toLowerCase().includes(searchTerm.toLowerCase())
+                            )
+                            .map((user, idx) => (
+                                <tr
+                                    key={idx}
+                                    className="border-t border-[#36fba122] hover:bg-[#1f1f1f]"
+                                >
+                                    <td className="p-3">{user.name}</td>
+                                    <td className="p-3">{user.email}</td>
+                                    <td className="p-3">{user.hostel || "—"}</td>
+                                    <td className="p-3">{user.room || "—"}</td>
+                                    <td className="p-3 capitalize">{user.role}</td>
+                                    <td className="p-3">
+                                        <select
+                                            value={user.role}
+                                            onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                                            className="bg-[#1c1f1e] border border-[#36fba1] rounded px-2 py-1 text-sm"
+                                        >
+                                            <option value="student">Student</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="secretary">Secretary</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            ))}
                         {users.length === 0 && (
                             <tr>
                                 <td className="p-4 italic opacity-50" colSpan={6}>
@@ -90,7 +120,6 @@ const ManageUsers = () => {
             </div>
         </div>
     );
-
 };
 
 export default ManageUsers;

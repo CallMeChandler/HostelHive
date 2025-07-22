@@ -1,32 +1,26 @@
 /*  ── src/auth/authService.js  ────────────────────────────────────── */
 
 const USER_LIST_KEY = "hostelhive-users";      // one key for everything
-const CURRENT_KEY   = "user";
+const CURRENT_KEY = "user";
 
 /* helper: always trim + lower‑case email */
-const cleanEmail    = (e) => e.trim().toLowerCase();
+const cleanEmail = (e) => e.trim().toLowerCase();
 const cleanPassword = (p) => p.trim();
 
 /* 🔐 LOGIN  */
-export const login = ({ email, password }) => {
-  const users = JSON.parse(localStorage.getItem(USER_LIST_KEY)) || [];
+export const loginUser = async (credentials) => {
+  const res = await fetch("http://localhost:5000/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(credentials)
+  });
 
-  const e = cleanEmail(email);
-  const p = cleanPassword(password);
-
-  const user = users.find(
-    (u) => cleanEmail(u.email) === e && cleanPassword(u.password) === p
-  );
-
-  console.log("users ⇒", users);        // 🔎 debug
-  console.log("looking for ⇒", e, p);
-  console.log("match ⇒", user);
-
-  if (user) {
-    localStorage.setItem(CURRENT_KEY, JSON.stringify(user));
-    return true;
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Login failed");
   }
-  return false;
+
+  return res.json(); // { token, user }
 };
 
 /* 🔏 SIGN‑UP  */
@@ -42,7 +36,7 @@ export const signup = ({ name, email, password, room, hostel }) => {
   users.push(newUser);
 
   localStorage.setItem(USER_LIST_KEY, JSON.stringify(users));
-  localStorage.setItem(CURRENT_KEY,   JSON.stringify(newUser));
+  localStorage.setItem(CURRENT_KEY, JSON.stringify(newUser));
 
   return true;
 };
