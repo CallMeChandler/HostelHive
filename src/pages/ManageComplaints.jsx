@@ -52,7 +52,7 @@ const ManageComplaints = () => {
               <p className="text-lg font-semibold">{c.title}</p>
               <p className="text-sm text-gray-300">{c.description}</p>
               <p className="text-xs text-gray-400">
-                {c.name} ({c.email}) | Room: {c.room} | Category: {c.category}
+                {c.name} ({c.email}) | Room: {c.room} | Category: {c.type}
               </p>
               <div className="mt-2 flex items-center gap-4">
                 <span className="text-sm">

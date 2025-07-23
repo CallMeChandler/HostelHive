@@ -10,5 +10,15 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-export const submitComplaint = (data) => API.post("/", data);
+export const submitComplaint = (data) => {
+  const { title, description, category, room } = data;
+
+  return API.post("/", {
+    title,
+    description,
+    type: category,
+    room,
+  });
+};
+
 export const getMyComplaints = () => API.get("/my");

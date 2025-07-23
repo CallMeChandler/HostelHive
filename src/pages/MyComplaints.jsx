@@ -37,22 +37,25 @@ const MyComplaints = () => {
                             className="bg-[#1c1f1e] border border-[#36fba122] rounded-lg p-5 flex flex-col md:flex-row md:justify-between md:items-center"
                         >
                             <div>
-                                <h4 className="font-semibold text-lg mb-1">{complaint.category} Complaint</h4>
+                                <h4 className="font-semibold text-lg mb-1">{complaint.title}</h4>
                                 <p className="text-sm opacity-80 mb-1">Room: {complaint.room}</p>
                                 <p className="text-sm opacity-80">"{complaint.description}"</p>
                             </div>
 
                             <div className="mt-3 md:mt-0 flex items-center gap-3">
                                 <span
-                                    className={`px-3 py-1 text-sm rounded-full font-semibold ${complaint.status === "closed"
-                                        ? "bg-green-600 text-white"
-                                        : "bg-yellow-400 text-black"
+                                    className={`px-3 py-1 text-sm rounded-full font-semibold ${complaint.status === "Resolved"
+                                            ? "bg-green-600 text-white"
+                                            : complaint.status === "Rejected"
+                                                ? "bg-red-500 text-white"
+                                                : "bg-yellow-400 text-black"
                                         }`}
                                 >
-                                    {complaint.status === "closed" ? "Closed" : "Lodged"}
+                                    {complaint.status}
                                 </span>
+
                                 <p className="text-xs opacity-60">
-                                    {new Date(complaint.date).toLocaleString()}
+                                    {new Date(complaint.createdAt).toLocaleString()}
                                 </p>
                             </div>
                         </div>

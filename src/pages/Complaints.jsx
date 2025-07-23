@@ -120,11 +120,11 @@ const Complaints = () => {
           >
             <p className="text-sm font-semibold">
               {c.title}{" "}
-              <span className="text-xs text-gray-400">({c.category})</span>
+              <span className="text-xs text-gray-400">{c.category}</span>
             </p>
             <p className="text-sm">{c.description}</p>
             <p className="text-xs text-gray-500">
-              Room: {c.room} | Status: {c.status}
+              Status: {c.status}
             </p>
             <p className="text-xs text-gray-500">
               {new Date(c.createdAt).toLocaleString()}

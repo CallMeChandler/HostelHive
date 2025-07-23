@@ -1,12 +1,17 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { postNotification } from "../api/circular"; // ✅ backend API
+import { getCurrentUser } from "../auth/authService";
+import axios from "axios";
 
 const ManageNotifications = () => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [file, setFile] = useState(null);
 
-    const handleSubmit = (e) => {
+    const user = getCurrentUser();
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!title || !desc) {
@@ -14,22 +19,27 @@ const ManageNotifications = () => {
             return;
         }
 
-        const notifications = JSON.parse(localStorage.getItem("hostelhive-notifications")) || [];
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("desc", desc);
+        if (file) formData.append("file", file);
 
-        const newNotif = {
-            id: Date.now(),
-            title,
-            desc,
-            pdf: file ? URL.createObjectURL(file) : null,
-            timestamp: new Date().toISOString(),
-            readBy: []
-        };
+        try {
+            const res = await axios.post("http://localhost:5000/api/circulars", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
 
-        localStorage.setItem("hostelhive-notifications", JSON.stringify([newNotif, ...notifications]));
-        toast.success("Notification posted!");
-        setTitle("");
-        setDesc("");
-        setFile(null);
+            toast.success("Notification posted!");
+            setTitle("");
+            setDesc("");
+            setFile(null);
+        } catch (err) {
+            console.error("Failed to post notification", err);
+            toast.error("Failed to post notification");
+        }
     };
 
     return (
@@ -56,7 +66,7 @@ const ManageNotifications = () => {
                     type="file"
                     accept="application/pdf"
                     onChange={(e) => setFile(e.target.files[0])}
-                    className="text-sm"
+                    className="text-sm text-white"
                 />
 
                 <button

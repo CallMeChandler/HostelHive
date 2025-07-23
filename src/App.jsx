@@ -16,7 +16,7 @@ import ManageUsers from "./pages/ManageUsers";
 import ManageSports from "./pages/ManageSports";
 import EditMessMenu from "./pages/EditMessMenu";
 import Notifications from "./pages/Notifications";
-import ManageNotifications from "./components/ManageNotifications";
+import ManageNotifications from "./pages/ManageNotifications";
 import { Toaster } from 'react-hot-toast';
 import { getCurrentUser } from "./auth/authService";
 
