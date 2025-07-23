@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../auth/authService";
+import { updateProfile } from "../api/user";
+import toast from "react-hot-toast";
+
 
 const Profile = () => {
     const [user, setUser] = useState(null);
+    const [dirty, setDirty] = useState(false);
+    const [pendingData, setPendingData] = useState({});
 
     useEffect(() => {
         const u = getCurrentUser();
@@ -10,19 +15,23 @@ const Profile = () => {
     }, []);
 
     const handleBranchChange = (e) => {
-        const updated = { ...user, branch: e.target.value };
-        setUser(updated);
-        localStorage.setItem("hostelhive-user", JSON.stringify(updated));
+        const newBranch = e.target.value;
+        setUser({ ...user, branch: newBranch });
+        setPendingData((prev) => ({ ...prev, branch: newBranch }));
+        setDirty(true);
     };
+
+
 
     const handlePhoto = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const base64 = await fileToBase64(file);
-        const updated = { ...user, profileImage: base64 };
-        setUser(updated);
-        localStorage.setItem("hostelhive-user", JSON.stringify(updated));
+        setUser({ ...user, profileImage: base64 });
+        setPendingData((prev) => ({ ...prev, profileImage: base64 }));
+        setDirty(true);
     };
+
 
     const fileToBase64 = (file) =>
         new Promise((res) => {
@@ -38,8 +47,10 @@ const Profile = () => {
     const rollMatch = user.email.match(/([a-zA-Z]+)(\d+)\.(\d{2})/i);
     const programme = rollMatch ? rollMatch[1].toUpperCase() : "–";
     const rollNum = rollMatch ? rollMatch[2] : "–";
-    const batch = rollMatch ? `20${rollMatch[3]}` : "–";
+    const batch = rollMatch ? `k${rollMatch[3]}` : "–";
     const fullRoll = `${programme}/${rollNum}/${batch.slice(-2)}`;
+    { console.log("Dirty:", dirty, "Pending:", pendingData) }
+
 
     return (
         <div className="min-h-screen bg-[#0a0f0d] text-[#36fba1] p-8 flex flex-col items-center">
@@ -88,6 +99,26 @@ const Profile = () => {
                     />
                 </div>
             </div>
+            {dirty && (
+                <button
+                    onClick={async () => {
+                        try {
+                            await updateProfile(pendingData);
+                            toast.success("Profile updated!");
+                            localStorage.setItem("hostelhive-user", JSON.stringify({ ...user, ...pendingData }));
+                            setUser((prev) => ({ ...prev, ...pendingData }));
+                            setDirty(false);
+                            setPendingData({});
+                        } catch {
+                            toast.error("Update failed.");
+                        }
+                    }}
+                    className="mt-6 bg-[#36fba1] text-black px-6 py-2 rounded hover:bg-[#2ae79a] transition"
+                >
+                    Save Changes
+                </button>
+
+            )}
         </div>
     );
 };
