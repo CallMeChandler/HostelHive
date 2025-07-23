@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { fetchMessMenu } from "../api/messmenu";
+
 
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const meals = ["Breakfast", "Lunch", "Snacks", "Dinner"];
@@ -9,16 +11,21 @@ const MessMenu = () => {
   const [weekMenu, setWeekMenu] = useState({});
 
   useEffect(() => {
-    // Set current day on first load
     const today = days[new Date().getDay()];
     setSelectedDay(today);
 
-    // Load from localStorage
-    const saved = JSON.parse(localStorage.getItem(MENU_KEY));
-    if (saved) {
-      setWeekMenu(saved);
-    }
+    const loadMenu = async () => {
+      try {
+        const res = await fetchMessMenu();
+        setWeekMenu(res.data.week || {});
+      } catch (err) {
+        console.error("Failed to load mess menu", err);
+      }
+    };
+
+    loadMenu();
   }, []);
+
 
   return (
     <div className="min-h-screen bg-[#0a0f0d] p-6 text-[#36fba1]">
@@ -46,9 +53,9 @@ const MessMenu = () => {
           >
             <h3 className="text-xl font-semibold mb-2">{meal}</h3>
 
-            {weekMenu[selectedDay] && weekMenu[selectedDay][meal] ? (
+            {weekMenu[selectedDay.toLowerCase()]?.[meal.toLowerCase()] ? (
               <ul className="list-disc list-inside space-y-1 text-xl">
-                {weekMenu[selectedDay][meal]
+                {weekMenu[selectedDay.toLowerCase()][meal.toLowerCase()]
                   .split(",")
                   .map((item, idx) => (
                     <li key={idx}>{item.trim()}</li>
@@ -59,6 +66,7 @@ const MessMenu = () => {
             )}
           </div>
         ))}
+
       </div>
     </div>
   );

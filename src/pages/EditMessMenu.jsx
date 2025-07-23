@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getCurrentUser } from "../auth/authService";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { fetchMessMenu, updateMessMenu } from "../api/messmenu";
 
 const daysOfWeek = [
   "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
@@ -29,17 +30,33 @@ const EditMessMenu = () => {
       return;
     }
 
-    const savedMenu = JSON.parse(localStorage.getItem(MENU_KEY)) || {};
-    setMenu(savedMenu);
-    if (savedMenu[selectedDay]) {
-      setForm(savedMenu[selectedDay]);
-    }
+    const fetchData = async () => {
+      try {
+        const res = await fetchMessMenu();
+        const savedMenu = res.data?.week || {};
+        setMenu(savedMenu);
 
+        // 🛠 Always set form safely
+        const initial = savedMenu[selectedDay] || {
+          Breakfast: "",
+          Lunch: "",
+          Snacks: "",
+          Dinner: "",
+        };
+        setForm(initial);
+      } catch (err) {
+        toast.error("Failed to load mess menu.");
+      }
+    };
+
+
+    fetchData();
   }, []);
+
 
   const handleDayChange = (day) => {
     setSelectedDay(day);
-    setForm(menu[day] || {
+    setForm(menu[day.toLowerCase()] || {
       Breakfast: "",
       Lunch: "",
       Snacks: "",
@@ -47,16 +64,36 @@ const EditMessMenu = () => {
     });
   };
 
+
   const handleInput = (meal, value) => {
     setForm({ ...form, [meal]: value });
   };
 
-  const handleSave = () => {
-    const updatedMenu = { ...menu, [selectedDay]: form };
-    setMenu(updatedMenu);
-    localStorage.setItem(MENU_KEY, JSON.stringify(updatedMenu));
-    toast.success(`${selectedDay} menu updated!`);
+  const handleSave = async () => {
+    try {
+      // Convert meal keys to lowercase before sending
+      const normalizedMeals = {};
+      Object.entries(form).forEach(([key, value]) => {
+        normalizedMeals[key.toLowerCase()] = value;
+      });
+
+      await updateMessMenu(selectedDay.toLowerCase(), normalizedMeals);
+
+      toast.success(`${selectedDay} menu saved!`);
+
+      // Refresh menu from DB
+      const res = await fetchMessMenu();
+      const updatedMenu = res.data?.week || {};
+      setMenu(updatedMenu);
+      setForm(updatedMenu[selectedDay.toLowerCase()] || {});
+    } catch (err) {
+      toast.error("Failed to save menu.");
+    }
   };
+
+
+
+
 
   return (
     <div className="p-6 min-h-screen bg-[#0a0f0d] text-[#36fba1]">
