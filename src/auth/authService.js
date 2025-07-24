@@ -45,5 +45,16 @@ export const signup = ({ name, email, password, room, hostel }) => {
 export const logout = () => localStorage.removeItem(CURRENT_KEY);
 
 
-export const getCurrentUser = () =>
-  JSON.parse(localStorage.getItem(CURRENT_KEY));
+export const getCurrentUser = () => {
+  const raw = localStorage.getItem("user");
+  if (!raw) return null;
+
+  try {
+    const parsed = JSON.parse(raw);
+    
+    return parsed.data ? parsed.data : parsed;
+  } catch {
+    return null;
+  }
+};
+
