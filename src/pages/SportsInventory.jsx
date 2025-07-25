@@ -11,6 +11,7 @@ const SportsInventory = () => {
     const fetchStock = async () => {
       try {
         const res = await fetchSportsStock();
+        console.log("📦 Sports items fetched:", res.data);
         setStock(res.data);
       } catch (err) {
         toast.error("Failed to load sports inventory.");
