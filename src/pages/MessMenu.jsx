@@ -1,31 +1,35 @@
 import { useState, useEffect } from "react";
 import { fetchMessMenu } from "../api/messmenu";
 
-
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const meals = ["Breakfast", "Lunch", "Snacks", "Dinner"];
-const MENU_KEY = "hostelhive-mess-menu";
 
 const MessMenu = () => {
-  const [selectedDay, setSelectedDay] = useState(days[0]);
+  const [selectedDay, setSelectedDay] = useState("");
   const [weekMenu, setWeekMenu] = useState({});
 
+  // Set today's day and fetch menu initially
   useEffect(() => {
     const today = days[new Date().getDay()];
     setSelectedDay(today);
+  }, []);
 
+  // Refetch menu whenever selected day changes
+  useEffect(() => {
     const loadMenu = async () => {
       try {
         const res = await fetchMessMenu();
+        console.log("🔁 Fetched fresh mess menu:", res.data);
         setWeekMenu(res.data.week || {});
       } catch (err) {
         console.error("Failed to load mess menu", err);
       }
     };
 
-    loadMenu();
-  }, []);
+    if (selectedDay) loadMenu();
+  }, [selectedDay]);
 
+  const currentMeals = weekMenu[selectedDay.toLowerCase()] || {};
 
   return (
     <div className="min-h-screen bg-[#0a0f0d] p-6 text-[#36fba1]">
@@ -37,7 +41,9 @@ const MessMenu = () => {
           <button
             key={day}
             onClick={() => setSelectedDay(day)}
-            className={`px-3 py-1 rounded-full border border-[#36fba144] ${selectedDay === day ? "bg-[#36fba1] text-black" : ""}`}
+            className={`px-3 py-1 rounded-full border border-[#36fba144] ${
+              selectedDay === day ? "bg-[#36fba1] text-black" : ""
+            }`}
           >
             {day}
           </button>
@@ -53,9 +59,9 @@ const MessMenu = () => {
           >
             <h3 className="text-xl font-semibold mb-2">{meal}</h3>
 
-            {weekMenu[selectedDay.toLowerCase()]?.[meal.toLowerCase()] ? (
+            {currentMeals[meal.toLowerCase()] ? (
               <ul className="list-disc list-inside space-y-1 text-xl">
-                {weekMenu[selectedDay.toLowerCase()][meal.toLowerCase()]
+                {currentMeals[meal.toLowerCase()]
                   .split(",")
                   .map((item, idx) => (
                     <li key={idx}>{item.trim()}</li>
@@ -66,7 +72,6 @@ const MessMenu = () => {
             )}
           </div>
         ))}
-
       </div>
     </div>
   );

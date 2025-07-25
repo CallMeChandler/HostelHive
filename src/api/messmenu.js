@@ -10,9 +10,8 @@ API.interceptors.request.use((req) => {
     return req;
 });
 
-export const updateMessMenu = (day, meals) =>
-    API.put(`/edit`, { day, meals });
-
+export const updateMessMenu = (day, meals, hostel) =>
+  API.put(`/edit`, { day, meals, hostel });
 
 export const fetchMessMenu = () =>
     API.get("/");

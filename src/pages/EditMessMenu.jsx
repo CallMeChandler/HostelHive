@@ -76,16 +76,23 @@ const EditMessMenu = () => {
       Object.entries(form).forEach(([key, value]) => {
         normalizedMeals[key.toLowerCase()] = value;
       });
+      console.log("🛠️ Final payload:", {
+        day: selectedDay.toLowerCase(),
+        meals: normalizedMeals,
+        hostel: user?.hostel
+      });
 
-      await updateMessMenu(selectedDay.toLowerCase(), normalizedMeals);
+      await updateMessMenu(selectedDay.toLowerCase(), normalizedMeals, user?.hostel);
 
-      toast.success(`${selectedDay} menu saved!`);
-
-      // Refresh menu from DB
+      // Fetch updated menu
       const res = await fetchMessMenu();
+      console.log("🌐 Menu fetched after update:", res.data);
       const updatedMenu = res.data?.week || {};
       setMenu(updatedMenu);
       setForm(updatedMenu[selectedDay.toLowerCase()] || {});
+
+      toast.success(`${selectedDay} menu saved!`);
+      navigate("/mess", { state: { refresh: true } }); // 👈 move it at the end
     } catch (err) {
       toast.error("Failed to save menu.");
     }
@@ -118,7 +125,7 @@ const EditMessMenu = () => {
             <label className="block mb-1 text-sm">{meal}</label>
             <input
               type="text"
-              value={form[meal]}
+              value={form[meal] || ""}
               onChange={(e) => handleInput(meal, e.target.value)}
               placeholder={`Enter ${meal} items`}
               className="w-full p-2 rounded bg-[#1e1e1e] text-[#36fba1] border border-[#36fba144]"
