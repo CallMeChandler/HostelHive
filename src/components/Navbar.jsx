@@ -1,40 +1,85 @@
 import { MdMenu } from "react-icons/md";
 import { FiBell } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getCurrentUser, logout } from "../auth/authService"; // adjust path if needed
+import { getCurrentUser, logout } from "../auth/authService";
+import { ArrowLeft } from "lucide-react";
+
 
 const Navbar = ({ setDrawerOpen }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const user = getCurrentUser();
   const [unreadCount, setUnreadCount] = useState(0);
-
-  const handleLogout = () => {
-    logout();            // clear currentUser from localStorage
-    navigate("/login");  // go back to login screen
-  };
+  const showBack = location.pathname !== "/dashboard";
 
   useEffect(() => {
-    const allNotifications = JSON.parse(localStorage.getItem("hostelhive-notifications")) || [];
-    const readIds = JSON.parse(localStorage.getItem(`read-notifications-${user.email}`)) || [];
-    const unread = allNotifications.filter(n => !readIds.includes(n.id));
+    const all = JSON.parse(localStorage.getItem("hostelhive-notifications")) || [];
+    const read = JSON.parse(localStorage.getItem(`read-notifications-${user.email}`)) || [];
+    const unread = all.filter(n => !read.includes(n.id));
     setUnreadCount(unread.length);
   }, []);
 
+  // 👉 Swipe-to-back detection
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const handleTouchStart = (e) => {
+      touchStartX = e.changedTouches[0].clientX;
+    };
+
+    const handleTouchEnd = (e) => {
+      touchEndX = e.changedTouches[0].clientX;
+      const diff = touchEndX - touchStartX;
+
+      // ✅ Right swipe (min 75px) and not on /dashboard
+      if (diff > 75 && location.pathname !== "/dashboard") {
+        navigate("/dashboard");
+      }
+    };
+
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [location.pathname, navigate]);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
-    <nav className="w-full bg-[#0a0f0d] text-[#36fba1] px-6 py-4 flex justify-between items-center border-b border-[#36fba144]">
-      {/*  ── left side: logo + hamburger  ───────────────────────── */}
-      <div className="flex items-center gap-4">
-        {/* Hamburger visible only on mobile */}
-        <button onClick={() => setDrawerOpen(true)} className="md:hidden text-2xl">
+    <nav className="w-full bg-[#0a0f0d] text-[#36fba1] px-4 py-3 flex items-center justify-between border-b border-[#36fba144]">
+      <div className="flex items-center gap-3">
+        <button onClick={() => setDrawerOpen(true)} className="md:hidden text-2xl text-[#36fba1]">
           <MdMenu />
         </button>
-        <h1 className="text-xl font-semibold tracking-wide">HostelHive</h1>
+
+        {showBack && (
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="hidden md:flex items-center gap-1 hover:text-white transition"
+          >
+            <ArrowLeft size={18} />
+            <span className="text-sm font-medium">Back</span>
+          </button>
+        )}
+
+        <div className="flex items-center gap-2">
+          <img src="./img/HostelHive_PNG-logo.png" alt="Logo" className="w-12 h-12" />
+          <h1 className="text-lg font-semibold">HostelHive</h1>
+        </div>
       </div>
 
-      {/*  ── right side: welcome + logout  ──────────────────────── */}
       <div className="flex items-center gap-4">
-        <p className="text-sm opacity-80 hidden sm:block">Welcome, {user?.name?.split(" ")[0]}</p>
+        <p className="text-sm opacity-80 hidden sm:block">
+          Welcome, {user?.name?.split(" ")[0]}
+        </p>
 
         <button onClick={() => navigate("/notifications")} className="relative text-xl">
           <FiBell />
