@@ -20,7 +20,7 @@ const ManageUsers = () => {
         const fetchUsers = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("http://localhost:5000/api/users/all", {
+                const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/all`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -39,7 +39,7 @@ const ManageUsers = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await axios.put(
-                `http://localhost:5000/api/users/role/${id}`,
+                `${import.meta.env.VITE_API_BASE_URL}/users/role/${id}`,
                 { role: newRole },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

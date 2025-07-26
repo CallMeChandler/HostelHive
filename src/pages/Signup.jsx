@@ -24,6 +24,14 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // BIT Mesra email format: abc12345.23@bitmesra.ac.in
+    const emailPattern = /^[a-z]{2,4}\d{5}\.\d{2}@bitmesra\.ac\.in$/;
+
+    if (!emailPattern.test(formData.email.toLowerCase())) {
+      toast.error("Please register with a valid BIT Mesra email.");
+      return;
+    }
+
     try {
       const res = await registerUser(formData);
       toast.success("Registered successfully!");
@@ -33,6 +41,7 @@ const Signup = () => {
       toast.error(msg);
     }
   };
+
 
 
   return (
