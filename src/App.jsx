@@ -24,6 +24,7 @@ import { useState } from "react";
 
 
 function App() {
+  console.log("✅ App rendered");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const user = getCurrentUser();
   return (
