@@ -103,7 +103,9 @@ const ManageUsers = () => {
                                         >
                                             <option value="student">Student</option>
                                             <option value="admin">Admin</option>
-                                            <option value="secretary">Secretary</option>
+                                            <option value="mess-secretary">Mess Secretary</option>
+                                            <option value="maintenance-secretary">Maintenance Secretary</option>
+                                            <option value="sports-secretary">Sports Secretary</option>
                                         </select>
                                     </td>
                                 </tr>

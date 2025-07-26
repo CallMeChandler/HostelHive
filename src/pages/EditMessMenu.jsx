@@ -25,7 +25,7 @@ const EditMessMenu = () => {
   });
 
   useEffect(() => {
-    if (!user || (user.role !== "admin" && user.role !== "secretary")) {
+    if (!user || (user.role !== "admin" && user.role !== "mess-secretary")) {
       navigate("/dashboard");
       return;
     }

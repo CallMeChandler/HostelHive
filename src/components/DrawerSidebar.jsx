@@ -55,22 +55,22 @@ const DrawerSidebar = ({ isOpen, setIsOpen }) => {
           My Profile
         </Link>
 
-        {["admin"].includes(user?.role) && (
+        {["admin", "maintenance-secretary", "mess-secretary", "sports-secretary"].includes(user?.role) && (
           <Link to="/manage-notifications" className={linkStyle} onClick={() => setIsOpen(false)}>
             <MdNotificationAdd /> Manage Notifications
           </Link>
         )}
-        {["admin", "maintenance"].includes(user?.role) && (
+        {["admin", "maintenance-secretary", "mess-secretary", "sports-secretary"].includes(user?.role) && (
           <Link to="/manage-complaints" className={linkStyle} onClick={() => setIsOpen(false)}>
             <FaTools /> Manage Complaints
           </Link>
         )}
-        {["admin", "sports"].includes(user?.role) && (
+        {["admin", "sports-secretary"].includes(user?.role) && (
           <Link to="/manage-sports" className={linkStyle} onClick={() => setIsOpen(false)}>
             <FaTableTennis /> Manage Sports
           </Link>
         )}
-        {["admin", "mess"].includes(user?.role) && (
+        {["admin", "mess-secretary"].includes(user?.role) && (
           <Link to="/edit-mess-menu" className={linkStyle} onClick={() => setIsOpen(false)}>
             <IoFastFoodOutline /> Edit Mess Menu
           </Link>

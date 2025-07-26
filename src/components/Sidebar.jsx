@@ -31,7 +31,7 @@ const Sidebar = () => {
           <FaUser className="text-lg" />
           My Profile
         </Link>
-        {["admin"].includes(user?.role) && (
+        {["admin", "maintenance-secretary", "mess-secretary", "sports-secretary"].includes(user?.role) && (
           <li>
             <Link
               to="/manage-notifications"
@@ -41,7 +41,7 @@ const Sidebar = () => {
             </Link>
           </li>
         )}
-        {["admin", "maintenance"].includes(user?.role) && (
+        {["admin", "maintenance-secretary", "mess-secretary", "sports-secretary"].includes(user?.role) && (
           <li>
             <Link
               to="/manage-complaints"
@@ -51,7 +51,7 @@ const Sidebar = () => {
             </Link>
           </li>
         )}
-        {["admin", "sports"].includes(user?.role) && (
+        {["admin", "sports-secretary"].includes(user?.role) && (
           <li>
             <Link
               to="/manage-sports"
@@ -61,7 +61,7 @@ const Sidebar = () => {
             </Link>
           </li>
         )}
-        {["admin", "mess"].includes(user?.role) && (
+        {["admin", "mess-secretary"].includes(user?.role) && (
           <li>
             <Link
               to="/edit-mess-menu"
