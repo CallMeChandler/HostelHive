@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { submitComplaint, getMyComplaints } from "../api/complaint.js";
 import toast from "react-hot-toast";
+import * as leoProfanity from "leo-profanity";
+
+leoProfanity.loadDictionary();
+
+leoProfanity.add(["madarchod", "bhosdike", "chutiya", "randi", "gandu", "bkl", "mc", "bc", "lund", "loda", "bsdk"]);
+
 
 const Complaints = () => {
   const [formData, setFormData] = useState({
@@ -30,11 +36,21 @@ const Complaints = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
+
+    const isBad =
+      leoProfanity.check(formData.title) ||
+      leoProfanity.check(formData.description);
+
+    if (isBad) {
+      toast.error("Please avoid inappropriate language 😅");
+      return;
+    }
+
     try {
       await submitComplaint(formData);
       toast.success("Complaint submitted!");
 
-      // Reload complaint list
       const res = await getMyComplaints();
       setComplaints(res.data.reverse());
 
@@ -43,6 +59,7 @@ const Complaints = () => {
       toast.error(err.response?.data?.message || "Submission failed.");
     }
   };
+
 
   return (
     <div className="p-6 text-white bg-[#0e0e0e] min-h-screen">
