@@ -25,7 +25,7 @@ const ManageNotifications = () => {
         if (file) formData.append("file", file);
 
         try {
-            const res = await axios.post("http://localhost:5000/api/circulars", formData, {
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/circulars`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${localStorage.getItem("token")}`,

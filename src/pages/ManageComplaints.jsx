@@ -9,7 +9,7 @@ const ManageComplaints = () => {
     const fetchAll = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/complaints/all", {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/complaints/all`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setComplaints(res.data);
@@ -25,7 +25,7 @@ const ManageComplaints = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/complaints/${id}/status`,
+        `${import.meta.env.VITE_API_BASE_URL}/complaints/${id}/status`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
