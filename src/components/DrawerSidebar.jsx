@@ -34,10 +34,10 @@ const DrawerSidebar = ({ isOpen, setIsOpen }) => {
       </div>
 
       <ul className="p-6 space-y-5 text-sm font-medium">
-        <li className="bg-[#1c1f1e] px-4 py-2 rounded-lg shadow border border-[#36fba122] flex items-center gap-3">
+        <Link to="/dashboard" onClick={() => setIsOpen(false)} className="bg-[#1c1f1e] px-4 py-2 rounded-lg shadow border border-[#36fba122] flex items-center gap-3">
           <MdDashboard className="text-lg" />
           Dashboard
-        </li>
+        </Link>
         <Link to="/complaints" className={linkStyle} onClick={() => setIsOpen(false)}>
           <MdBuild className="text-lg" />
           Complaints
