@@ -14,6 +14,8 @@ const Navbar = ({ setDrawerOpen }) => {
   const showBack = location.pathname !== "/dashboard";
 
   useEffect(() => {
+    if (!user?.email) return; // prevent crash if user is null
+
     const loadUnreadCount = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -32,7 +34,8 @@ const Navbar = ({ setDrawerOpen }) => {
     loadUnreadCount();
     const interval = setInterval(loadUnreadCount, 10000); // every 10s
     return () => clearInterval(interval);
-  }, [user.email]);
+  }, [user?.email]);
+
 
 
   // 👉 Swipe-to-back detection
