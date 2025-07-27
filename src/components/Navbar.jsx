@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getCurrentUser, logout } from "../auth/authService";
 import { ArrowLeft } from "lucide-react";
-
+import { fetchNotifications } from "../api/circular";
 
 const Navbar = ({ setDrawerOpen }) => {
   const navigate = useNavigate();
@@ -14,11 +14,26 @@ const Navbar = ({ setDrawerOpen }) => {
   const showBack = location.pathname !== "/dashboard";
 
   useEffect(() => {
-    const all = JSON.parse(localStorage.getItem("hostelhive-notifications")) || [];
-    const read = JSON.parse(localStorage.getItem(`read-notifications-${user.email}`)) || [];
-    const unread = all.filter(n => !read.includes(n.id));
-    setUnreadCount(unread.length);
-  }, []);
+    const loadUnreadCount = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetchNotifications(token);
+        const allNotifs = res.data;
+
+        const read = JSON.parse(localStorage.getItem(`read-notifications-${user.email}`)) || [];
+        const unread = allNotifs.filter((n) => !read.includes(n._id));
+
+        setUnreadCount(unread.length);
+      } catch (err) {
+        console.error("Failed to fetch notifications in navbar:", err);
+      }
+    };
+
+    loadUnreadCount();
+    const interval = setInterval(loadUnreadCount, 10000); // every 10s
+    return () => clearInterval(interval);
+  }, [user.email]);
+
 
   // 👉 Swipe-to-back detection
   useEffect(() => {

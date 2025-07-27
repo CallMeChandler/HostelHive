@@ -19,7 +19,9 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       toast.success("Login successful!");
-      navigate("/dashboard");
+
+      // ✅ Full reload to ensure all state is fresh
+      window.location.href = "/dashboard";
     } catch (err) {
       const msg = err.response?.data?.message || "Login failed!";
       toast.error(msg);
