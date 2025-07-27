@@ -63,16 +63,17 @@ git clone https://github.com/your-username/hostelhive_project.git
 cd hostelhive_project
 
 ### 🛠 2. Backend Setup
-cd backend
-npm install
-npm run dev
+- cd backend
+- npm install
+- npm run dev
 
 ### 🌐 3. Frontend Setup
-cd hostelhive
-npm install
-npm run dev
+- cd hostelhive
+- npm install
+- npm run dev
 
 ## 📁 Folder Structure
+
 hostelhive_project/
 ├── backend/         # Express backend with MongoDB
 │   ├── controllers/
