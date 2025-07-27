@@ -18,14 +18,13 @@ import ManageSports from "./pages/ManageSports";
 import EditMessMenu from "./pages/EditMessMenu";
 import Notifications from "./pages/Notifications";
 import ManageNotifications from "./pages/ManageNotifications";
+import './index.css'
 import { Toaster } from 'react-hot-toast';
 import { getCurrentUser } from "./auth/authService";
-import { useState } from "react";
 
 
 function App() {
   console.log("✅ App rendered");
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const user = getCurrentUser();
   return (
     <>
@@ -67,24 +66,24 @@ function App() {
 
 
         {/* Dashboard Route */}
-        <Route
-          path="/dashboard"
-          element={
-            getCurrentUser() ?
-              (<div className="flex h-screen bg-[#0a0f0d] text-[#36fba1]">
-                <Sidebar />
-                <DrawerSidebar isOpen={drawerOpen} setIsOpen={setDrawerOpen} />
-                <div className="flex-1 flex flex-col">
-                  <Navbar setDrawerOpen={setDrawerOpen} />
-                  <main className="flex-1 overflow-y-auto">
-                    <Dashboard />
-                  </main>
-                </div>
-              </div>) : (
-                <Navigate to="/login" />
-              )
-          }
-        />
+        <Route element={<Layout />}>
+          <Route
+            path="/dashboard"
+            element={
+              getCurrentUser() ?
+                (<div className="flex h-screen bg-[#0a0f0d] text-[#36fba1]">
+                  <Sidebar />
+                  <div className="flex-1 flex flex-col">
+                    <main className="flex-1 overflow-y-auto sidebar-custom">
+                      <Dashboard />
+                    </main>
+                  </div>
+                </div>) : (
+                  <Navigate to="/login" />
+                )
+            }
+          />
+        </Route>
 
 
         {/* Redirect root (/) to /dashboard */}
