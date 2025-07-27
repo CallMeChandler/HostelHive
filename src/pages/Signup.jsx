@@ -25,7 +25,7 @@ const Signup = () => {
     e.preventDefault();
 
     // BIT Mesra email format: abc12345.23@bitmesra.ac.in
-    const emailPattern = /^[a-z]{2,4}\d{5}\.\d{2}@bitmesra\.ac\.in$/;
+    const emailPattern = /^[a-z]{2,10}\d{5}\.\d{2}@bitmesra\.ac\.in$/;
 
     if (!emailPattern.test(formData.email.toLowerCase())) {
       toast.error("Please register with a valid BIT Mesra email.");
