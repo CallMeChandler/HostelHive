@@ -28,7 +28,7 @@ const Dashboard = () => {
       try {
         const now = new Date();
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
-        const day = now.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase(); // e.g., "monday"
+        const day = now.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase(); // e.g., "sunday"
 
         const meals = [
           { name: "Breakfast", time: 450, end: 540 },
@@ -37,22 +37,33 @@ const Dashboard = () => {
           { name: "Dinner", time: 1230, end: 1320 },
         ];
 
-        const messData = await fetchMessMenu(); // { monday: { breakfast: "...", ... }, ... }
-        const todayMenuData = messData[day];
+        const messResponse = await fetchMessMenu();
+        const messData = messResponse.data.week;
 
-        const matched = meals.find(m => currentMinutes >= m.time && currentMinutes <= m.end);
-        const next = meals.find(m => currentMinutes < m.time) || meals[0];
 
-        const mealToShow = matched ? matched : next;
-        const mealKey = mealToShow.name.toLowerCase(); // "lunch", etc.
+        // 👉 Check if messData is an array or object
+        const todayMenuData = Array.isArray(messData)
+          ? messData.find((d) => d.day?.toLowerCase() === day)
+          : messData[day];
+
+        const matched = meals.find((m) => currentMinutes >= m.time && currentMinutes <= m.end);
+        const next = meals.find((m) => currentMinutes < m.time);
+        const mealToShow = matched || next || meals[meals.length - 1];
+        const mealKey = mealToShow.name.toLowerCase(); // e.g., "snacks", "dinner"
         const label = matched ? mealToShow.name : `Next Meal: ${mealToShow.name}`;
 
-        setTodayMenu(`${label}: ${todayMenuData?.[mealKey] || "Not set"}`);
+        const mealValue = todayMenuData?.[mealKey];
+        console.log("🧪 messData:", messData);
+        console.log("🗓️ Today is:", day);
+
+
+        setTodayMenu(`${label}: ${mealValue || "Not set"}`);
       } catch (err) {
         console.error("Error fetching menu:", err);
         setTodayMenu("Couldn't load menu");
       }
     };
+
 
     loadMessMenu();
     setSportsItems(6);
